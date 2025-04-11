@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "109942272104",
+    "project_id": "findease-e9677",
+    "storage_bucket": "findease-e9677.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109942272104:android:764b5c84a407fb3bbb8bdd",
+        "android_client_info": {
+          "package_name": "com.example.untitled"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0tjDSjxDOAZ3hsJIBZbryGUILP6Mdiv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
