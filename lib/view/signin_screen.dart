@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'home_screen.dart';
+
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -112,11 +116,32 @@ class _SignInScreenState extends State<SignInScreen>
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          // Form is valid, do sign up logic
-                          print("Email: ${_emailTextEditingController.text}");
-                          print("Password: ${_passwordTextEditingController.text}");
+                          final email = _emailTextEditingController.text.trim();
+                          final password = _passwordTextEditingController.text.trim();
+
+                          try {
+                            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                              email: email,
+                              password: password,
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("✅ Compte créé avec succès !")),
+                            );
+                            // Redirection vers HomeScreen
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const HomeScreen()),
+                            );
+
+                            // TODO: Naviguer vers une autre page (home page)
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("❌ Erreur : ${e.toString()}")),
+                            );
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -124,6 +149,7 @@ class _SignInScreenState extends State<SignInScreen>
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
+
                       ),
                       child: const Text("Sign in"),
                     ),

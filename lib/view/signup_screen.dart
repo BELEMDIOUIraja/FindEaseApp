@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'home_screen.dart';
+
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -25,46 +29,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-              children: [
-                // Image de fond
-                Positioned.fill(
-                  child: Image.asset(
-                    'image/images.jpg',
-                    fit: BoxFit.cover,
+
+            SizedBox(
+              height: 250, // hauteur limitée pour éviter qu'il recouvre tout
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.asset(
+                      'image/images.jpg',
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
 
-                // Logo en haut à droite
-                Positioned(
-                  top: 60,
-                  right: 20,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: const [
-                      Text(
-                        'FindEase',
-                        style: TextStyle(
-                          fontFamily: 'Pacifico',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                          color: Colors.white,
+
+                  // Logo en haut à droite
+                  Positioned(
+                    top: 60,
+                    right: 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: const [
+                        Text(
+                          'FindEase',
+                          style: TextStyle(
+                            fontFamily: 'Pacifico',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'home to perfection',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          color: Colors.white,
+                        Text(
+                          'home to perfection',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
 
-              ],
+                ],
+              ),
             ),
             // Formulaire Sign Up
             Container(
@@ -237,10 +245,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            print("Compte créé !");
-                            // TODO: Ajouter Firebase ici
+                            final email = _emailTextEditingController.text.trim();
+                            final password = _passwordTextEditingController.text.trim();
+                            final firstName = _firstNameTextEditingController.text.trim();
+                            final lastName = _lastNameTextEditingController.text.trim();
+                            final city = _cityTextEditingController.text.trim();
+                            final country = _countryTextEditingController.text.trim();
+                            final bio = _bioTextEditingController.text.trim();
+
+                            try {
+                              // 🔐 Création du compte Firebase Auth
+                              UserCredential userCredential = await FirebaseAuth.instance
+                                  .createUserWithEmailAndPassword(email: email, password: password);
+
+                              // ☁️ Ajout dans Firestore (collection 'users')
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(userCredential.user!.uid)
+                                  .set({
+                                'email': email,
+                                'firstName': firstName,
+                                'lastName': lastName,
+                                'city': city,
+                                'country': country,
+                                'bio': bio,
+                                'createdAt': FieldValue.serverTimestamp(),
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("✅ Compte et données enregistrés !")),
+                              );
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("❌ Erreur : ${e.toString()}")),
+                              );
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(

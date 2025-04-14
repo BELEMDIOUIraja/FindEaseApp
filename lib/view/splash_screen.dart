@@ -6,7 +6,7 @@ import 'login_screen.dart';
 
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({super.key, required bool recommendationInitialized});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     Timer(Duration(seconds: 3),()
     {
-      Navigator.pushReplacementNamed(context, '/login_screen.dart');
+      Navigator.pushReplacementNamed(context, '/login');
     });
   }
 
@@ -36,9 +36,9 @@ class _SplashScreenState extends State<SplashScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-                "image/image-removebg-preview (1).png",
-                height: MediaQuery.of(context).size.height*0.7, // hauteur en pixels
-              ), // Ajout d'un espace après l'image
+              "image/image-removebg-preview (1).png",
+              height: MediaQuery.of(context).size.height*0.7, // hauteur en pixels
+            ), // Ajout d'un espace après l'image
 
 
 
@@ -46,9 +46,9 @@ class _SplashScreenState extends State<SplashScreen>
 
 
 
-            ],
-          ),
+          ],
         ),
+      ),
     );
 
   }
